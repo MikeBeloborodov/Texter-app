@@ -6,7 +6,10 @@ import { sprintf } from "sprintf-js"
 export default function LoginForm({loginHandle, tokenHandle}){
 
     URL = process.env.REACT_APP_API_LOGIN_URL
-    
+
+    console.log(URL)
+    console.log(process.env)
+
     const [formData, setFormData] = React.useState({
         "email": "",
         "password": "",

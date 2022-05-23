@@ -1,6 +1,7 @@
 import React from "react"
 import {Form, Button, Card, Spinner} from "react-bootstrap"
 import { sprintf } from "sprintf-js"
+import AlertModal from "./AlertModal"
 
 
 export default function LoginForm(
@@ -8,7 +9,6 @@ export default function LoginForm(
         tokenHandle, 
         navbarHandle, 
         url_list,
-        wrongPasswordHandle
     }){
 
     const [formData, setFormData] = React.useState({
@@ -16,7 +16,12 @@ export default function LoginForm(
         "password": "",
         "submit": 0
     })
-
+    // alert modal for various purposes
+    const [showAlertModal, setAlertModal] = React.useState({
+        "show": false,
+        "title": "",
+        "body": ""
+    })
     // spinner animation
     const [loading, setLoading] = React.useState(false)
     
@@ -32,7 +37,14 @@ export default function LoginForm(
                 if (res.status === 200){
                     return res.json()
                 }else{
-                    wrongPasswordHandle(true)
+                    setAlertModal(oldValues => {
+                        return {
+                            ...oldValues,
+                            "show": true,
+                            "title": "Wrong credentials",
+                            "body": "Please check your email and password and try again."
+                        }
+                    })
                     return "wrong pass"
                 }
             })
@@ -76,6 +88,11 @@ export default function LoginForm(
     }
 
     return(
+        <>
+        <AlertModal 
+            showAlertModal={showAlertModal}
+            setAlertModal={setAlertModal} 
+        />
         <Card className="mb-3" bg="primary" text="light">
         <div style={{
                     justifyContent: "center", 
@@ -116,5 +133,6 @@ export default function LoginForm(
             </Form>
             </div>
         </Card>
+        </>
     )
 }

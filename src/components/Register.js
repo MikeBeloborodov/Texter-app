@@ -1,8 +1,8 @@
 import React from "react"
 import {Form, Button, Card, Spinner} from "react-bootstrap"
-import ProblemModal from "./ProblemModal"
+import AlertModal from "./AlertModal"
 
-export default function Register({url_list, wrongPasswordHandle}){
+export default function Register({url_list}){
 
     const [formData, setFormData] = React.useState({
         "email": "",
@@ -13,37 +13,55 @@ export default function Register({url_list, wrongPasswordHandle}){
 
     React.useEffect(() => {
         if (formData.submit){
+            const payload = {"email": formData.email, "password": formData.password}
             fetch(url_list.REGISTER_URL, {method: "POST",
-                        body: {
-                            "email": formData.email,
-                            "password": formData.password
-                        },
-                        headers: {
-                            "Content-Type": "application/json",
-                                }
-                    })
+                        headers:{"Content-Type": "application/json"},
+                        body: JSON.stringify(payload)})  
             .then(res => {
                 if (res.status === 201){
                     return res.json()
+                }else if (res.status === 403){
+                    setAlertModal({
+                            "show": true,
+                            "title": "User already exists",
+                            "body": "User with this email already exists. Please check your email address."
+                                })
+                    return "problem"
                 }else{
-                    setShowProblemModal(true)
-                    return res.json()
+                    setAlertModal({
+                            "show": true,
+                            "title": "Problem with response",
+                            "body": "Something wrong on the server side, please contact administrator."
+                                })
+                    return "problem"
                 }
             })
             .then(data => {
+                setLoading(false)
                 if (data === "problem"){
-                    console.log(data)
-                    setLoading(false)
                     return
                 }
-                console.log(data)
-                setLoading(false)
-                })
+                setFormData({
+                        "email": "",
+                        "password": "",
+                        "confirmPassword": "",
+                        "submit": 0
+                            })
+                setAlertModal({
+                        "show": true,
+                        "title": "New account registred",
+                        "body": "You can now login with your email and password."
+                            })
+            })
         }
     }, [formData.submit])   
 
-    // if server problem
-    const [showProblemModal, setShowProblemModal] = React.useState(false)
+    // alert modal for various purposes
+    const [showAlertModal, setAlertModal] = React.useState({
+        "show": false,
+        "title": "",
+        "body": ""
+    })
     // spinner animation
     const [loading, setLoading] = React.useState(false)
 
@@ -61,8 +79,13 @@ export default function Register({url_list, wrongPasswordHandle}){
     function handleSubmit(event){
         event.preventDefault()
         setLoading(true)
-        if (formData.password != formData.confirmPassword){
-            wrongPasswordHandle(true)
+        if (formData.password !== formData.confirmPassword){
+            setAlertModal({
+                "show": true,
+                "title": "Passwords do not match",
+                "body": "Plese make sure that password and confirm password are the same"
+                    })
+            setLoading(false)
             return
         }
         setFormData(oldValues => {
@@ -76,11 +99,9 @@ export default function Register({url_list, wrongPasswordHandle}){
 
     return(
         <>
-        <ProblemModal 
-            showProblemModal={showProblemModal}
-            setProblemModal={setShowProblemModal} 
-            title="Something went wrong" 
-            problem="Probably something went wrong on the server side. Please contact administrator."
+        <AlertModal 
+            showAlertModal={showAlertModal}
+            setAlertModal={setAlertModal} 
         />
         <Card className="mb-3" bg="primary" text="light">
         <div style={{

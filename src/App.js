@@ -7,7 +7,6 @@ import Posts from "./components/Posts"
 import NewPost from "./components/NewPost"
 import About from "./components/About"
 import Register from "./components/Register"
-import WrongPass from "./components/WrongPass"
 
 const URL_LIST = {
     LOGIN_URL: process.env.REACT_APP_API_LOGIN_URL,
@@ -30,9 +29,6 @@ export default function App(){
         "newPost": false,
         "about": false
     })
-    // show modal window if user entered wrong credentials
-    const [showWrongPassModal, setShowWrongPassModal] = React.useState(false)
-
     return(
         <div>
             { 
@@ -57,13 +53,6 @@ export default function App(){
                     tokenHandle={setUserToken}
                     navbarHandle={setNavbarChoice}
                     url_list={URL_LIST}
-                    wrongPasswordHandle={setShowWrongPassModal}
-                />
-                <WrongPass 
-                    showWrongPassModal={showWrongPassModal}
-                    setShowWrongPassModal={setShowWrongPassModal}
-                    title="Wrong credentials"
-                    problem="Please check your email and password and try again."
                 />
             </div>
             
@@ -78,13 +67,6 @@ export default function App(){
                             }}>
                     <Register 
                         url_list={URL_LIST}
-                        wrongPasswordHandle={setShowWrongPassModal}
-                    />
-                    <WrongPass 
-                    showWrongPassModal={showWrongPassModal}
-                    setShowWrongPassModal={setShowWrongPassModal}
-                    title="Wrong credentials"
-                    problem="Your passwords do not match. Please, try again."
                     />
                 </div>
 

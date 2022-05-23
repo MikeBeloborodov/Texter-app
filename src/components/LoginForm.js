@@ -3,9 +3,7 @@ import {Form, Button, Card} from "react-bootstrap"
 import { sprintf } from "sprintf-js"
 
 
-export default function LoginForm({loginHandle, tokenHandle}){
-
-    URL = process.env.REACT_APP_API_LOGIN_URL
+export default function LoginForm({loginHandle, tokenHandle, navbarHandle, url_list}){
 
     const [formData, setFormData] = React.useState({
         "email": "",
@@ -15,18 +13,30 @@ export default function LoginForm({loginHandle, tokenHandle}){
     
     React.useEffect(() => {
         if (formData.submit){
-            fetch(URL, {method: "POST",
+            fetch(url_list.LOGIN_URL, {method: "POST",
                         body: sprintf('username=%s&password=%s', formData.email, formData.password),
                         headers: {
                             "Content-Type": "application/x-www-form-urlencoded",
                                 }
                     }).then( (res) => {
                         if (res.status === 200){
-                            loginHandle(true)
+                            return res.json()
                         }else{
                             alert("Wrong credentials. Try again.")
+                            return 1
                         }
-                    })
+                    }).then(data => {
+                        if (data === 1){
+                            return
+                        }
+                        tokenHandle(data)
+                        loginHandle(true)
+                        navbarHandle(oldValues => {
+                            return ({
+                                ...oldValues,
+                                "allPosts": true
+                            })
+                        })})
         }
     }, [formData.submit])       
 

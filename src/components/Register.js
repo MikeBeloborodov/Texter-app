@@ -27,11 +27,18 @@ export default function Register({url_list}){
                             "body": "User with this email already exists. Please check your email address."
                                 })
                     return "problem"
+                }else if (res.status === 422){
+                    setAlertModal({
+                        "show": true,
+                        "title": "Format error",
+                        "body": "You have entered wrong email or password format. Make sure that email has symbol @."
+                            })
+                    return "problem"
                 }else{
                     setAlertModal({
                             "show": true,
-                            "title": "Problem with response",
-                            "body": "Something wrong on the server side, please contact administrator."
+                            "title": "Server problem",
+                            "body": "Something is wrong on the server side, please contact administrator."
                                 })
                     return "problem"
                 }
@@ -88,13 +95,21 @@ export default function Register({url_list}){
             setLoading(false)
             return
         }
+        if (formData.email === "" || formData.password === ""){
+            setAlertModal({
+                "show": true,
+                "title": "Empty fields",
+                "body": "Please fill all the fields."
+                        })
+            setLoading(false)
+            return
+        }
         setFormData(oldValues => {
             return ({
                 ...oldValues,
                 "submit": oldValues.submit + 1
             })
         })
-        console.log(formData)
     }
 
     return(
@@ -120,6 +135,7 @@ export default function Register({url_list}){
                      name="email"
                      placeholder="Enter email" 
                      onChange={handleFormData}
+                     value={formData.email}
                     />
                 </Form.Group>
 
@@ -130,6 +146,7 @@ export default function Register({url_list}){
                     name="password"
                     placeholder="Enter password" 
                     onChange={handleFormData}
+                    value={formData.password}
                 />
                 </Form.Group>
                 <Form.Group className="mb-3" controlId="formBasicPassword">
@@ -139,6 +156,7 @@ export default function Register({url_list}){
                     name="confirmPassword"
                     placeholder="Confirm password" 
                     onChange={handleFormData}
+                    value={formData.confirmPassword}
                 />
                 </Form.Group>
                 <div style={{display: "flex", justifyContent: "space-between", padding:"0 21px 0 0"}}>

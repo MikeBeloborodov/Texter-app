@@ -36,20 +36,31 @@ export default function LoginForm(
             .then(res => {
                 if (res.status === 200){
                     return res.json()
-                }else{
-                    setAlertModal(oldValues => {
-                        return {
-                            ...oldValues,
+                }else if (res.status === 422){
+                    setAlertModal({
+                        "show": true,
+                        "title": "Format error",
+                        "body": "You have entered wrong email or password format. Make sure that email has symbol @."
+                            })
+                    return "problem"
+                }else if (res.status === 403){
+                    setAlertModal({
                             "show": true,
                             "title": "Wrong credentials",
                             "body": "Please check your email and password and try again."
-                        }
-                    })
-                    return "wrong pass"
+                                })
+                    return "problem"
+                }else{
+                    setAlertModal({
+                        "show": true,
+                        "title": "Server problem",
+                        "body": "There is a problem with our server. Please contact administrator."
+                            })
+                    return "problem"
                 }
             })
             .then(data => {
-                if (data === "wrong pass"){
+                if (data === "problem"){
                     setLoading(false)
                     return
                 }
@@ -79,6 +90,15 @@ export default function LoginForm(
     function handleSubmit(event){
         setLoading(true)
         event.preventDefault()
+        if (formData.email === "" || formData.password === ""){
+            setAlertModal({
+                "show": true,
+                "title": "Empty fields",
+                "body": "Please fill all the fields."
+                        })
+            setLoading(false)
+            return
+        }
         setFormData(oldValues => {
             return ({
                 ...oldValues,
@@ -110,6 +130,7 @@ export default function LoginForm(
                      name="email"
                      placeholder="Enter email" 
                      onChange={handleFormData}
+                     value={formData.email}
                     />
                 </Form.Group>
 
@@ -120,6 +141,7 @@ export default function LoginForm(
                     name="password"
                     placeholder="Enter password" 
                     onChange={handleFormData}
+                    value={formData.password}
                 />
                 </Form.Group>
                 <div style={{display: "flex", justifyContent: "space-between", padding:"0 21px 0 0"}}>

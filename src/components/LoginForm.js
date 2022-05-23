@@ -1,15 +1,24 @@
 import React from "react"
-import {Form, Button, Card} from "react-bootstrap"
+import {Form, Button, Card, Spinner} from "react-bootstrap"
 import { sprintf } from "sprintf-js"
 
 
-export default function LoginForm({loginHandle, tokenHandle, navbarHandle, url_list}){
+export default function LoginForm(
+    {   loginHandle, 
+        tokenHandle, 
+        navbarHandle, 
+        url_list,
+        wrongPasswordHandle
+    }){
 
     const [formData, setFormData] = React.useState({
         "email": "",
         "password": "",
         "submit": 0
     })
+
+    // spinner animation
+    const [loading, setLoading] = React.useState(false)
     
     React.useEffect(() => {
         if (formData.submit){
@@ -18,25 +27,29 @@ export default function LoginForm({loginHandle, tokenHandle, navbarHandle, url_l
                         headers: {
                             "Content-Type": "application/x-www-form-urlencoded",
                                 }
-                    }).then( (res) => {
-                        if (res.status === 200){
-                            return res.json()
-                        }else{
-                            alert("Wrong credentials. Try again.")
-                            return 1
-                        }
-                    }).then(data => {
-                        if (data === 1){
-                            return
-                        }
-                        tokenHandle(data)
-                        loginHandle(true)
-                        navbarHandle(oldValues => {
-                            return ({
-                                ...oldValues,
-                                "allPosts": true
-                            })
-                        })})
+                    })
+            .then(res => {
+                if (res.status === 200){
+                    return res.json()
+                }else{
+                    wrongPasswordHandle(true)
+                    return "wrong pass"
+                }
+            })
+            .then(data => {
+                if (data === "wrong pass"){
+                    setLoading(false)
+                    return
+                }
+                setLoading(false)
+                tokenHandle(data)
+                loginHandle(true)
+                navbarHandle(oldValues => {
+                return ({
+                    ...oldValues,
+                    "allPosts": true
+                })
+            })})
         }
     }, [formData.submit])       
 
@@ -52,6 +65,7 @@ export default function LoginForm({loginHandle, tokenHandle, navbarHandle, url_l
     }
     
     function handleSubmit(event){
+        setLoading(true)
         event.preventDefault()
         setFormData(oldValues => {
             return ({
@@ -63,7 +77,14 @@ export default function LoginForm({loginHandle, tokenHandle, navbarHandle, url_l
 
     return(
         <Card className="mb-3" bg="primary" text="light">
-        <div style={{padding: "10px 10px 10px"}}>
+        <div style={{
+                    justifyContent: "center", 
+                    alignItems: "center", 
+                    display: "flex",
+                    padding: "20px 0 0 0"}}>
+            <h1>Login</h1>
+        </div>
+        <div style={{padding: "20px 30px 30px 30px"}}>
             <Form onSubmit={handleSubmit}>
                 <Form.Group className="mb-3" controlId="formBasicEmail">
                     <Form.Label>Email address</Form.Label>
@@ -80,13 +101,18 @@ export default function LoginForm({loginHandle, tokenHandle, navbarHandle, url_l
                     <Form.Control 
                     type="password" 
                     name="password"
-                    placeholder="Password" 
+                    placeholder="Enter password" 
                     onChange={handleFormData}
                 />
                 </Form.Group>
-                <Button variant="light" type="submit">
-                    Submit
-                </Button>
+                <div style={{display: "flex", justifyContent: "space-between", padding:"0 21px 0 0"}}>
+                    <Button variant="light" type="submit">
+                        Submit
+                    </Button>
+                    {loading && <Spinner animation="border"/>}
+                </div>
+                <br />
+                <p>Press register to get new account</p>
             </Form>
             </div>
         </Card>

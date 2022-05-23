@@ -1,4 +1,10 @@
 body{
-    background-color:rgb(236, 253, 253);
+    background-color:rgb(197, 215, 232);
 }
 
+.maindiv{
+    justify-content: center;
+    justify-items: center;
+    align-items: center;
+    display: flex;
+}

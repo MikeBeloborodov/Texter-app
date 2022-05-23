@@ -24,7 +24,7 @@ export default function Posts({userToken, url_list}){
                     elements = data.map(data => {
                         return(
                             <div key={data.id}>
-                            <Card style={{ width: '18rem' }}>
+                            <Card style={{width: "400px"}}>
                                 <Card.Body>
                                     <Card.Title>{data.title}</Card.Title>
                                     <Card.Subtitle className="mb-2 text-muted">{data.owner.email}</Card.Subtitle>

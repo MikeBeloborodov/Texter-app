@@ -2,11 +2,20 @@ import React from 'react'
 import { Form, Button, Modal, Spinner } from 'react-bootstrap'
 import AlertModal from "./AlertModal"
 
-export default function UpdatePost({post_id, url_list, userToken, setPostChangedState}){
+export default function UpdatePost({
+    post_id, 
+    url_list, 
+    userToken, 
+    setPostChangedState,
+    setUserAction
+    }){
     
     // modal popup if user wants to update a post
     const [showUpdateModal, setShowUpdateModal] = React.useState(true)
     // form values
+    // submit = 0 default
+    // submit = 2 submit was pressed
+    // sibmit = 3 submit finished
     const [formData, setFormData] = React.useState({
         "title": "",
         "content": "",
@@ -20,9 +29,48 @@ export default function UpdatePost({post_id, url_list, userToken, setPostChanged
     })
     // spinner animation
     const [loading, setLoading] = React.useState(false)
-
+    // get old post title and content by id
     React.useEffect(() => {
-        if (formData.submit){
+        setLoading(true)
+        fetch(url_list.POSTS_URL + post_id, {method: "GET",
+                    headers:{
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${userToken.access_token}`
+                    }})  
+        .then(res => {
+            if (res.status === 200){
+                return res.json()
+            }else if (res.status === 403){
+                setAlertModal({
+                        "show": true,
+                        "title": "Access problem",
+                        "body": "You do not have access to perform this action."
+                            })
+                return "problem"
+            }else{
+                setAlertModal({
+                        "show": true,
+                        "title": "Server problem",
+                        "body": "Something is wrong on the server side, please contact administrator."
+                            })
+                return "problem"
+            }
+        })
+        .then(data => {
+            setLoading(false)
+            if (data === "problem"){
+                return
+            }
+            setFormData({
+                    "title": data.title,
+                    "content": data.content,
+                    "submit": 0
+                        })
+        })
+    }, [])
+    // send updated post to the server
+    React.useEffect(() => {
+        if (formData.submit === 1){
             const payload = {"title": formData.title, "content": formData.content}
             fetch(url_list.POSTS_URL + post_id, {method: "PATCH",
                         headers:{
@@ -64,7 +112,7 @@ export default function UpdatePost({post_id, url_list, userToken, setPostChanged
                 setFormData({
                         "title": "",
                         "content": "",
-                        "submit": 0
+                        "submit": 2
                             })
                 setAlertModal({
                         "show": true,
@@ -77,7 +125,18 @@ export default function UpdatePost({post_id, url_list, userToken, setPostChanged
 
     function handleClose(){
         setShowUpdateModal(false)
-        setPostChangedState(true)
+        setUserAction(() =>{
+            return ({
+                like: 0,
+                update: 0,
+                delete: 0
+            })
+        })
+        // if user didn't send his update
+        // we don't render posts again
+        if (formData.submit !== 0){
+            setPostChangedState(true)
+        }
     }
     
     function handleFormData(event){
@@ -92,7 +151,7 @@ export default function UpdatePost({post_id, url_list, userToken, setPostChanged
     }
 
     function handleSubmit(event){
-       // setLoading(true)
+        setLoading(true)
         event.preventDefault()
         if (formData.title === "" || formData.content === ""){
             setAlertModal({
@@ -106,7 +165,7 @@ export default function UpdatePost({post_id, url_list, userToken, setPostChanged
         setFormData(oldValues => {
             return ({
                 ...oldValues,
-                "submit": oldValues.submit + 1
+                "submit": 1
             })
         })
     }
@@ -145,7 +204,11 @@ export default function UpdatePost({post_id, url_list, userToken, setPostChanged
                 />
             </Form.Group>
             <div style={{display: "flex", float: "right"}}>
-                {loading && <Spinner animation="border"/>}
+                {loading && 
+                <div style={{paddingRight:"30px"}}>
+                <Spinner animation="border"/>
+                </div>
+                }
                 <Button variant="primary" type="submit" onClick={handleSubmit}>
                     Submit
                 </Button>

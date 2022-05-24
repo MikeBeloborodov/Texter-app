@@ -140,7 +140,7 @@ export default function PostActionDropdown({
                                                     userToken={userToken}
                                                     url_list={url_list}
                                                     setPostChangedState={setPostChangedState}
-
+                                                    setUserAction={setUserAction}
                                         />}
             {showAlertModal &&  
                 <AlertModal 

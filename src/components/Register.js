@@ -128,7 +128,7 @@ export default function Register({url_list}){
         </div>
         <div style={{padding: "20px 30px 30px 30px"}}>
             <Form onSubmit={handleSubmit}>
-                <Form.Group className="mb-3" controlId="formBasicEmail">
+                <Form.Group className="mb-3" controlId="formBasicEmailRegister">
                     <Form.Label>Email address</Form.Label>
                     <Form.Control
                      type="email" 
@@ -139,7 +139,7 @@ export default function Register({url_list}){
                     />
                 </Form.Group>
 
-                <Form.Group className="mb-3" controlId="formBasicPassword">
+                <Form.Group className="mb-3" controlId="formBasicPasswordRegister">
                     <Form.Label>Password</Form.Label>
                     <Form.Control 
                     type="password" 
@@ -149,7 +149,7 @@ export default function Register({url_list}){
                     value={formData.password}
                 />
                 </Form.Group>
-                <Form.Group className="mb-3" controlId="formBasicPassword">
+                <Form.Group className="mb-3" controlId="formBasicPasswordRegisterConfirm">
                     <Form.Label>Confirm password</Form.Label>
                     <Form.Control 
                     type="password" 

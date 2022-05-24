@@ -1,14 +1,18 @@
 import React from 'react'
-import {Card} from "react-bootstrap"
+import {Card, Button, Spinner} from "react-bootstrap"
 
 
 export default function Posts({userToken, url_list}){
     
     const [posts, setPosts] = React.useState([])
     
+    // spinner animation
+    const [loading, setLoading] = React.useState(false)
+    
     let elements
 
     React.useEffect(() => {
+        setLoading(true)
         fetch(url_list.POSTS_URL, {method: "GET",
                     headers: {
                         "Authorization": `Bearer ${userToken.access_token}`,
@@ -18,9 +22,14 @@ export default function Posts({userToken, url_list}){
                         return res.json()
                     }else{
                         alert("Something went wrong.")
-                        return
+                        setLoading(false)
+                        return "problem"
                     }
                 }).then(data => {
+                    if (data === "problem"){
+                        elements = <h4>Posts should be here, but there was an error...</h4>
+                        return
+                    }
                     elements = data.map(data => {
                         return(
                             <div key={data.id}>
@@ -33,24 +42,34 @@ export default function Posts({userToken, url_list}){
                                     {data.content}
                                     </Card.Text>
                                     <br/>   
-                                    <Card.Subtitle className="mb-2 text-muted">
-                                    <pre>{data.created_at.slice(11, 16)}  {data.created_at.slice(0,10)}</pre>
-                                    </Card.Subtitle>
-                                    <Card.Subtitle className="mb-2 text-muted">
-                                    <pre>Likes: {data.likes}               <button>Like</button></pre>
-                                    </Card.Subtitle>
+                                    <div className="date-time-likes" style={{display: "flex"}}>
+                                        <Card.Subtitle className="mb-2 text-muted" style={{paddingRight: "10px"}}>
+                                            {data.created_at.slice(11, 16)}
+                                        </Card.Subtitle>
+                                        <Card.Subtitle className="mb-2 text-muted" style={{paddingRight: "40px"}}>
+                                            {data.created_at.slice(0,10)}
+                                        </Card.Subtitle>
+                                        <Card.Subtitle className="mb-2 text-muted">
+                                            Likes: {data.likes}               
+                                        </Card.Subtitle>
+                                    </div>
+                                    <div className="like-button" style={{display: "flex", justifyContent: "right"}}>
+                                    <Button>Like</Button>
+                                    </div>
                                 </Card.Body>
                             </Card>
                             <br />
                             </div>
                         )
                     })
+                    setLoading(false)
                     setPosts(elements)
                 })
     }, [])
     
     return(
         <div>
+            {loading && <Spinner animation="border"/>}
             {posts}
         </div>
     )

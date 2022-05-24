@@ -124,7 +124,7 @@ export default function LoginForm(
         </div>
         <div style={{padding: "20px 30px 30px 30px"}}>
             <Form onSubmit={handleSubmit}>
-                <Form.Group className="mb-3" controlId="formBasicEmail">
+                <Form.Group className="mb-3" controlId="formBasicEmailLogin">
                     <Form.Label>Email address</Form.Label>
                     <Form.Control
                      type="email" 
@@ -135,7 +135,7 @@ export default function LoginForm(
                     />
                 </Form.Group>
 
-                <Form.Group className="mb-3" controlId="formBasicPassword">
+                <Form.Group className="mb-3" controlId="formBasicPasswordLogin">
                     <Form.Label>Password</Form.Label>
                     <Form.Control 
                     type="password" 

@@ -20,7 +20,7 @@ export default function NavbarNew({isLogged, setNavbarChoice}){
     }
     
     return(
-        <Navbar bg="primary" variant="dark">
+        <Navbar bg="primary " variant="dark">
             <Container>
                 <Image roundedCircle src={logo} width="40px"></Image>
                 <Navbar.Brand href="#home">Texter</Navbar.Brand>

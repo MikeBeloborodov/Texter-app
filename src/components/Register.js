@@ -118,7 +118,7 @@ export default function Register({url_list}){
             showAlertModal={showAlertModal}
             setAlertModal={setAlertModal} 
         />
-        <Card className="mb-3" bg="primary" text="light">
+        <Card className="mb-3" bg="light" text="dark">
         <div style={{
                     justifyContent: "center", 
                     alignItems: "center", 
@@ -160,7 +160,7 @@ export default function Register({url_list}){
                 />
                 </Form.Group>
                 <div style={{display: "flex", justifyContent: "space-between", padding:"0 21px 0 0"}}>
-                    <Button variant="light" type="submit">
+                    <Button variant="primary" type="submit">
                         Submit
                     </Button>
                     {loading && <Spinner animation="border"/>}

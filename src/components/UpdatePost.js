@@ -14,8 +14,9 @@ export default function UpdatePost({
     const [showUpdateModal, setShowUpdateModal] = React.useState(true)
     // form values
     // submit = 0 default
-    // submit = 2 submit was pressed
-    // sibmit = 3 submit finished
+    // submit = 1 submit was pressed
+    // sibmit = 2 submit finished
+    // I use submit to determine whether I need to render posts again or not
     const [formData, setFormData] = React.useState({
         "title": "",
         "content": "",

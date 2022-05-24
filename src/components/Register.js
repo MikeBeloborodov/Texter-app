@@ -10,7 +10,15 @@ export default function Register({url_list}){
         "confirmPassword": "",
         "submit": 0
     })
-
+    // alert modal for various purposes
+    const [showAlertModal, setAlertModal] = React.useState({
+        "show": false,
+        "title": "",
+        "body": ""
+    })
+    // spinner animation
+    const [loading, setLoading] = React.useState(false)
+    
     React.useEffect(() => {
         if (formData.submit){
             const payload = {"email": formData.email, "password": formData.password}
@@ -63,14 +71,6 @@ export default function Register({url_list}){
         }
     }, [formData.submit])   
 
-    // alert modal for various purposes
-    const [showAlertModal, setAlertModal] = React.useState({
-        "show": false,
-        "title": "",
-        "body": ""
-    })
-    // spinner animation
-    const [loading, setLoading] = React.useState(false)
 
     function handleFormData(event){
         const {name, value} = event.target

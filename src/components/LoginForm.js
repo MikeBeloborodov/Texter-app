@@ -151,7 +151,7 @@ export default function LoginForm(
                     {loading && <Spinner animation="border"/>}
                 </div>
                 <br />
-                <p>Press register to get new account</p>
+                <p>Press register to get a new account</p>
             </Form>
             </div>
         </Card>

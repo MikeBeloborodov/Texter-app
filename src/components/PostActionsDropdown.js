@@ -1,8 +1,14 @@
 import React from 'react'
 import { Dropdown } from 'react-bootstrap'
 import AlertModal from "./AlertModal"
+import UpdatePost from './UpdatePost'
 
-export default function PostActionDropdown({id, userToken, url_list, setPostChangedState}){
+export default function PostActionDropdown({
+    id, 
+    userToken, 
+    url_list, 
+    setPostChangedState
+    }){
     // get id for a liked post and set it, default id is 0
     const [userAction, setUserAction] = React.useState({
         like: 0,
@@ -118,39 +124,25 @@ export default function PostActionDropdown({id, userToken, url_list, setPostChan
     
     }, [userAction.delete])
     
-    function handleLike(){
-        setUserAction(() =>{
+    function handleChoice(event){
+        setUserAction(oldValues =>{
             return ({
-                like: id,
-                update: 0,
-                delete: 0
-            })
-        })
-    }
-
-    function handleUpdate(){
-        setUserAction(() =>{
-            return ({
-                like: 0,
-                update: id,
-                delete: 0
-            })
-        })
-    }
-
-    function handleDelete(){
-        setUserAction(() =>{
-            return ({
-                like: 0,
-                update: 0,
-                delete: id
+                ...oldValues,
+                [event.target.name]: id
             })
         })
     }
 
     return(
         <div>
-            {showAlertModal && 
+            {userAction.update !== 0 && <UpdatePost 
+                                                    post_id={id}
+                                                    userToken={userToken}
+                                                    url_list={url_list}
+                                                    setPostChangedState={setPostChangedState}
+
+                                        />}
+            {showAlertModal &&  
                 <AlertModal 
                     showAlertModal={showAlertModal}
                     setAlertModal={setAlertModal} 
@@ -160,9 +152,9 @@ export default function PostActionDropdown({id, userToken, url_list, setPostChan
                 </Dropdown.Toggle>
 
                 <Dropdown.Menu>
-                    <Dropdown.Item onClick={handleLike}>Like</Dropdown.Item>
-                    <Dropdown.Item onClick={handleUpdate}>Update</Dropdown.Item>
-                    <Dropdown.Item onClick={handleDelete}>Delete</Dropdown.Item>
+                    <Dropdown.Item name="like" onClick={handleChoice}>Like</Dropdown.Item>
+                    <Dropdown.Item name="update" onClick={handleChoice}>Update</Dropdown.Item>
+                    <Dropdown.Item name="delete" onClick={handleChoice}>Delete</Dropdown.Item>
                 </Dropdown.Menu>
             </Dropdown>
         </div>

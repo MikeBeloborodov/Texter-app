@@ -1,8 +1,12 @@
-import React from "react"
-import {Form, Button, Card, Spinner} from "react-bootstrap"
+import React from 'react'
+import { Form, Button, Modal, Spinner } from 'react-bootstrap'
 import AlertModal from "./AlertModal"
 
-export default function NewPost({url_list, userToken}){
+export default function UpdatePost({post_id, url_list, userToken, setPostChangedState}){
+    
+    // modal popup if user wants to update a post
+    const [showUpdateModal, setShowUpdateModal] = React.useState(true)
+    // form values
     const [formData, setFormData] = React.useState({
         "title": "",
         "content": "",
@@ -16,11 +20,11 @@ export default function NewPost({url_list, userToken}){
     })
     // spinner animation
     const [loading, setLoading] = React.useState(false)
-    
+
     React.useEffect(() => {
         if (formData.submit){
             const payload = {"title": formData.title, "content": formData.content}
-            fetch(url_list.POSTS_URL, {method: "POST",
+            fetch(url_list.POSTS_URL + post_id, {method: "PATCH",
                         headers:{
                             "Content-Type": "application/json",
                             "Authorization": `Bearer ${userToken.access_token}`
@@ -64,13 +68,17 @@ export default function NewPost({url_list, userToken}){
                             })
                 setAlertModal({
                         "show": true,
-                        "title": "Your post has been published!",
-                        "body": 'You can now see it on the "All posts" page.'
+                        "title": "Your post has been updated!",
+                        "body": 'Updated post is now on the "All posts" page.'
                             })
             })
         }
     }, [formData.submit]) 
-    
+
+    function handleClose(){
+        setShowUpdateModal(false)
+        setPostChangedState(true)
+    }
     
     function handleFormData(event){
         const {name, value} = event.target
@@ -82,9 +90,9 @@ export default function NewPost({url_list, userToken}){
             })
         })
     }
-    
+
     function handleSubmit(event){
-        setLoading(true)
+       // setLoading(true)
         event.preventDefault()
         if (formData.title === "" || formData.content === ""){
             setAlertModal({
@@ -103,53 +111,49 @@ export default function NewPost({url_list, userToken}){
         })
     }
 
-    return(
-        <>
+    return (
+        <div>
         <AlertModal 
-            showAlertModal={showAlertModal}
-            setAlertModal={setAlertModal} 
+        showAlertModal={showAlertModal}
+        setAlertModal={setAlertModal} 
         />
-        <Card className="mb-3" bg="light" text="dark">
-        <div style={{
-                    justifyContent: "center", 
-                    alignItems: "center", 
-                    display: "flex",
-                    padding: "20px 0 0 0"}}>
-            <h1>New post</h1>
-        </div>
-        <div style={{padding: "20px 30px 30px 30px"}}>
-            <Form onSubmit={handleSubmit}>
-                <Form.Group className="mb-3" controlId="formBasicEmail">
-                    <Form.Label>Title</Form.Label>
-                    <Form.Control
-                     type="text" 
-                     name="title"
-                     placeholder="Enter title" 
-                     onChange={handleFormData}
-                     value={formData.title}
-                    />
-                </Form.Group>
-
-                <Form.Group className="mb-3" controlId="formBasicPassword">
-                    <Form.Label>Text</Form.Label>
-                    <Form.Control 
+        <Modal show={showUpdateModal} onHide={handleClose} centered backdrop="static">
+          <Modal.Header closeButton>
+            <Modal.Title>Update post</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+          <Form>
+            <Form.Group className="mb-3" controlId="formUpdatedTitle">
+                <Form.Label>Title</Form.Label>
+                <Form.Control 
+                    type="text" 
+                    placeholder="Updated title"
+                    name="title"
+                    onChange={handleFormData}
+                    value={formData.title}
+                />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="formBasicUpdatedText">
+                <Form.Label>Text</Form.Label>
+                <Form.Control 
                     as="textarea" 
                     rows={4}
                     name="content"
-                    placeholder="Your text here" 
+                    placeholder="Updated text here" 
                     onChange={handleFormData}
                     value={formData.content}
-                    />
-                </Form.Group>
-                <div style={{display: "flex", justifyContent: "space-between", padding:"0 21px 0 0"}}>
-                    <Button variant="primary" type="submit">
-                        Submit
-                    </Button>
-                    {loading && <Spinner animation="border"/>}
-                </div>
-            </Form>
+                />
+            </Form.Group>
+            <div style={{display: "flex", float: "right"}}>
+                {loading && <Spinner animation="border"/>}
+                <Button variant="primary" type="submit" onClick={handleSubmit}>
+                    Submit
+                </Button>
             </div>
-        </Card>
-        </>
+            </Form>
+          </Modal.Body>
+        </Modal>
+        </div>
+
     )
 }

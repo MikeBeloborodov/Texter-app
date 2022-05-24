@@ -31,6 +31,24 @@ export default function App(){
         "newPost": false,
         "about": false
     })
+    // if something changed about posts reload them
+    const [postChangedState, setPostChangedState] = React.useState(false)
+    const [postElements, setPostElements] = React.useState()
+    React.useEffect(() => {
+        if (postChangedState == true){
+            setPostElements(() => {
+                return (
+                        <Posts 
+                            userToken={userToken}
+                            url_list={URL_LIST}
+                            setPostChangedState={setPostChangedState}
+                        />
+                )
+            })
+        }
+        setPostChangedState(false)
+    }, [postChangedState])
+    
     return(
         <div>
             { 
@@ -51,7 +69,6 @@ export default function App(){
                     in={navbarChoice.login} 
                     mountOnEnter={true}
                     unmountOnExit={true}
-                    timeout={0}
                 >   
                     <div style={{   width: "400px",
                                     margin: "0 auto", 
@@ -62,6 +79,7 @@ export default function App(){
                             tokenHandle={setUserToken}
                             navbarHandle={setNavbarChoice}
                             url_list={URL_LIST}
+                            setPostChangedState={setPostChangedState}
                         />
                     </div>
                 </Fade>
@@ -76,7 +94,6 @@ export default function App(){
                     in={navbarChoice.register} 
                     mountOnEnter={true}
                     unmountOnExit={true}
-                    timeout={0}
                 >   
                     <div style={{   width: "400px", 
                                     margin: "0 auto", 
@@ -92,22 +109,18 @@ export default function App(){
             {
 
                 // Posts after login
-            navbarChoice.allPosts && isLogged && 
+            navbarChoice.allPosts && isLogged && !postChangedState &&
                 <Fade
                     appear={true}
                     in={navbarChoice.allPosts} 
                     mountOnEnter={true}
                     unmountOnExit={true}
-                    timeout={0}
                 >   
                     <div style={{   
                                     margin: "0 auto", 
                                     padding: "50px 0 0 0",
                                 }}>
-                        <Posts 
-                            userToken={userToken}
-                            url_list={URL_LIST}
-                        />
+                        {postElements}
                     </div>
                 </Fade>
             
@@ -121,7 +134,6 @@ export default function App(){
                     in={navbarChoice.about} 
                     mountOnEnter={true}
                     unmountOnExit={true}
-                    timeout={0}
                 >
                     <div style={{   
                                     margin: "0 auto", 
@@ -141,7 +153,6 @@ export default function App(){
                         in={navbarChoice.newPost} 
                         mountOnEnter={true}
                         unmountOnExit={true}
-                        timeout={0}
                     >   
                         <div style={{   width: "400px", 
                                         margin: "0 auto", 

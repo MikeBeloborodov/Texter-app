@@ -9,6 +9,7 @@ export default function LoginForm(
         tokenHandle, 
         navbarHandle, 
         url_list,
+        setPostChangedState
     }){
 
     const [formData, setFormData] = React.useState({
@@ -66,6 +67,7 @@ export default function LoginForm(
                 }
                 setLoading(false)
                 tokenHandle(data)
+                setPostChangedState(true)
                 loginHandle(true)
                 navbarHandle(oldValues => {
                 return ({

@@ -70,6 +70,7 @@ export default function LoginForm(
                 navbarHandle(oldValues => {
                 return ({
                     ...oldValues,
+                    "login": false,
                     "allPosts": true
                 })
             })})

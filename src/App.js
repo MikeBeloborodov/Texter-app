@@ -1,7 +1,9 @@
 import React from "react"
 import 'bootstrap/dist/css/bootstrap.min.css'
+import 'react-transition-group'
+import { Fade } from "react-bootstrap"
 import "./index.css"
-import NavbarNew from "./components/NavbarNew"
+import Navbar from "./components/Navbar"
 import LoginForm from "./components/LoginForm"
 import Posts from "./components/Posts"
 import NewPost from "./components/NewPost"
@@ -35,7 +37,7 @@ export default function App(){
 
                 // Navbar
             <div>
-                <NavbarNew isLogged={isLogged} setNavbarChoice={setNavbarChoice}/>
+                <Navbar isLogged={isLogged} setNavbarChoice={setNavbarChoice}/>
             </div>
 
             }
@@ -43,74 +45,114 @@ export default function App(){
             {
 
                 // Login page
-            navbarChoice.login && !isLogged && 
-            <div style={{   width: "400px",
-                            margin: "0 auto", 
-                            padding: "100px 0 0 0"
-                            }}>
-                <LoginForm 
-                    loginHandle={setIsLogged}
-                    tokenHandle={setUserToken}
-                    navbarHandle={setNavbarChoice}
-                    url_list={URL_LIST}
-                />
-            </div>
+                navbarChoice.login &&   
+                <Fade
+                    appear={true}
+                    in={navbarChoice.login} 
+                    mountOnEnter={true}
+                    unmountOnExit={true}
+                    timeout={0}
+                >   
+                    <div style={{   width: "400px",
+                                    margin: "0 auto", 
+                                    padding: "100px 0 0 0"
+                                    }}>
+                        <LoginForm 
+                            loginHandle={setIsLogged}
+                            tokenHandle={setUserToken}
+                            navbarHandle={setNavbarChoice}
+                            url_list={URL_LIST}
+                        />
+                    </div>
+                </Fade>
             
             }
             {
 
                 // Register page
-                navbarChoice.register &&  
-                <div style={{   width: "400px", 
-                                margin: "0 auto", 
-                                padding: "100px 0 0 0",
-                            }}>
-                    <Register 
-                        url_list={URL_LIST}
-                    />
-                </div>
+                navbarChoice.register &&   
+                <Fade
+                    appear={true}
+                    in={navbarChoice.register} 
+                    mountOnEnter={true}
+                    unmountOnExit={true}
+                    timeout={0}
+                >   
+                    <div style={{   width: "400px", 
+                                    margin: "0 auto", 
+                                    padding: "100px 0 0 0",
+                                }}>
+                        <Register 
+                            url_list={URL_LIST}
+                        />
+                    </div>
+                </Fade>
 
             }
             {
 
                 // Posts after login
             navbarChoice.allPosts && isLogged && 
-            <div style={{   
-                            margin: "0 auto", 
-                            padding: "50px 0 0 0",
-                        }}>
-                <Posts 
-                    userToken={userToken}
-                    url_list={URL_LIST}
-                />
-            </div>
+                <Fade
+                    appear={true}
+                    in={navbarChoice.allPosts} 
+                    mountOnEnter={true}
+                    unmountOnExit={true}
+                    timeout={0}
+                >   
+                    <div style={{   
+                                    margin: "0 auto", 
+                                    padding: "50px 0 0 0",
+                                }}>
+                        <Posts 
+                            userToken={userToken}
+                            url_list={URL_LIST}
+                        />
+                    </div>
+                </Fade>
             
             }
             {
 
                 // About page
-                navbarChoice.about && 
-                <div style={{   
-                                margin: "0 auto", 
-                                padding: "10% 3% 0 3%",
-                            }}>
-                    <About />
-                </div>
+                navbarChoice.about &&
+                <Fade   
+                    appear={true}
+                    in={navbarChoice.about} 
+                    mountOnEnter={true}
+                    unmountOnExit={true}
+                    timeout={0}
+                >
+                    <div style={{   
+                                    margin: "0 auto", 
+                                    padding: "10% 3% 0 3%",
+                                }}>
+                        <About />
+                    </div>
+                </Fade>
 
             }
             {
                 
                 // Create new post page
                 navbarChoice.newPost && 
-                <div style={{   width: "400px", 
-                                margin: "0 auto", 
-                                padding: "50px 0 0 0",
-                            }}>
-                    <NewPost 
-                        userToken={userToken}
-                        url_list={URL_LIST}
-                    />
-                </div>
+                    <Fade
+                        appear={true}
+                        in={navbarChoice.newPost} 
+                        mountOnEnter={true}
+                        unmountOnExit={true}
+                        timeout={0}
+                    >   
+                        <div style={{   width: "400px", 
+                                        margin: "0 auto", 
+                                        padding: "50px 0 0 0",
+                                    }}>
+                            <NewPost 
+                                userToken={userToken}
+                                url_list={URL_LIST}
+                            />
+                        </div>
+                    </Fade>
 
             }
             </div>

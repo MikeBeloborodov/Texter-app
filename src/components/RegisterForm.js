@@ -2,10 +2,12 @@ import React from "react"
 import {Form, Button, Card, Spinner} from "react-bootstrap"
 import AlertModal from "./AlertModal"
 
-export default function NewPost({url_list, userToken}){
+export default function RegisterForm({URL_LIST}){
+
     const [formData, setFormData] = React.useState({
-        "title": "",
-        "content": "",
+        "email": "",
+        "password": "",
+        "confirmPassword": "",
         "submit": 0
     })
     // alert modal for various purposes
@@ -19,12 +21,9 @@ export default function NewPost({url_list, userToken}){
     
     React.useEffect(() => {
         if (formData.submit){
-            const payload = {"title": formData.title, "content": formData.content}
-            fetch(url_list.POSTS_URL, {method: "POST",
-                        headers:{
-                            "Content-Type": "application/json",
-                            "Authorization": `Bearer ${userToken.access_token}`
-                        },
+            const payload = {"email": formData.email, "password": formData.password}
+            fetch(URL_LIST.REGISTER_URL, {method: "POST",
+                        headers:{"Content-Type": "application/json"},
                         body: JSON.stringify(payload)})  
             .then(res => {
                 if (res.status === 201){
@@ -32,15 +31,15 @@ export default function NewPost({url_list, userToken}){
                 }else if (res.status === 403){
                     setAlertModal({
                             "show": true,
-                            "title": "Access problem",
-                            "body": "You do not have access to perform this action."
+                            "title": "User already exists",
+                            "body": "User with this email already exists. Please check your email address."
                                 })
                     return "problem"
                 }else if (res.status === 422){
                     setAlertModal({
                         "show": true,
                         "title": "Format error",
-                        "body": "You have entered you text in a wrong format. Please check it and try again."
+                        "body": "You have entered wrong email or password format. Make sure that email has symbol @."
                             })
                     return "problem"
                 }else{
@@ -58,20 +57,21 @@ export default function NewPost({url_list, userToken}){
                     return
                 }
                 setFormData({
-                        "title": "",
-                        "content": "",
+                        "email": "",
+                        "password": "",
+                        "confirmPassword": "",
                         "submit": 0
                             })
                 setAlertModal({
                         "show": true,
-                        "title": "Your post has been published!",
-                        "body": 'You can now see it on the "All posts" page.'
+                        "title": "New account registred",
+                        "body": "You can now login with your email and password."
                             })
             })
         }
-    }, [formData.submit]) 
-    
-    
+    }, [formData.submit])   
+
+
     function handleFormData(event){
         const {name, value} = event.target
         
@@ -82,11 +82,20 @@ export default function NewPost({url_list, userToken}){
             })
         })
     }
-    
+
     function handleSubmit(event){
-        setLoading(true)
         event.preventDefault()
-        if (formData.title === "" || formData.content === ""){
+        setLoading(true)
+        if (formData.password !== formData.confirmPassword){
+            setAlertModal({
+                "show": true,
+                "title": "Passwords do not match",
+                "body": "Plese make sure that password and confirm password are the same"
+                    })
+            setLoading(false)
+            return
+        }
+        if (formData.email === "" || formData.password === ""){
             setAlertModal({
                 "show": true,
                 "title": "Empty fields",
@@ -115,31 +124,40 @@ export default function NewPost({url_list, userToken}){
                     alignItems: "center", 
                     display: "flex",
                     padding: "20px 0 0 0"}}>
-            <h1>New post</h1>
+            <h1>New account</h1>
         </div>
         <div style={{padding: "20px 30px 30px 30px"}}>
             <Form onSubmit={handleSubmit}>
-                <Form.Group className="mb-3" controlId="formBasicEmail">
-                    <Form.Label>Title</Form.Label>
+                <Form.Group className="mb-3" controlId="formBasicEmailRegister">
+                    <Form.Label>Email address</Form.Label>
                     <Form.Control
-                     type="text" 
-                     name="title"
-                     placeholder="Enter title" 
+                     type="email" 
+                     name="email"
+                     placeholder="Enter email" 
                      onChange={handleFormData}
-                     value={formData.title}
+                     value={formData.email}
                     />
                 </Form.Group>
 
-                <Form.Group className="mb-3" controlId="formBasicPassword">
-                    <Form.Label>Text</Form.Label>
+                <Form.Group className="mb-3" controlId="formBasicPasswordRegister">
+                    <Form.Label>Password</Form.Label>
                     <Form.Control 
-                    as="textarea" 
-                    rows={4}
-                    name="content"
-                    placeholder="Your text here" 
+                    type="password" 
+                    name="password"
+                    placeholder="Enter password" 
                     onChange={handleFormData}
-                    value={formData.content}
-                    />
+                    value={formData.password}
+                />
+                </Form.Group>
+                <Form.Group className="mb-3" controlId="formBasicPasswordRegisterConfirm">
+                    <Form.Label>Confirm password</Form.Label>
+                    <Form.Control 
+                    type="password" 
+                    name="confirmPassword"
+                    placeholder="Confirm password" 
+                    onChange={handleFormData}
+                    value={formData.confirmPassword}
+                />
                 </Form.Group>
                 <div style={{display: "flex", justifyContent: "space-between", padding:"0 21px 0 0"}}>
                     <Button variant="primary" type="submit">

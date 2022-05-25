@@ -1,9 +1,8 @@
 import React from 'react'
 import {Card} from "react-bootstrap"
 
-export default function About(){
+export default function AboutForm(){
     return(
-        <>
         <Card style={{width: "400px"}}>
             <Card.Body>
                 <Card.Title>About</Card.Title>
@@ -24,6 +23,5 @@ export default function About(){
                 </Card.Subtitle>
             </Card.Body>
         </Card>
-        </>
     )
 }

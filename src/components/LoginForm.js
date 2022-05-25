@@ -2,14 +2,13 @@ import React from "react"
 import {Form, Button, Card, Spinner} from "react-bootstrap"
 import { sprintf } from "sprintf-js"
 import AlertModal from "./AlertModal"
+import { Navigate } from 'react-router-dom'
 
 
 export default function LoginForm(
     {   loginHandle, 
         tokenHandle, 
-        navbarHandle, 
-        url_list,
-        setPostChangedState
+        URL_LIST
     }){
 
     const [formData, setFormData] = React.useState({
@@ -25,10 +24,12 @@ export default function LoginForm(
     })
     // spinner animation
     const [loading, setLoading] = React.useState(false)
+
+    const [successfullyLogged, setSuccessfullyLogged] = React.useState(false)
     
     React.useEffect(() => {
         if (formData.submit){
-            fetch(url_list.LOGIN_URL, {method: "POST",
+            fetch(URL_LIST.LOGIN_URL, {method: "POST",
                         body: sprintf('username=%s&password=%s', formData.email, formData.password),
                         headers: {
                             "Content-Type": "application/x-www-form-urlencoded",
@@ -67,15 +68,9 @@ export default function LoginForm(
                 }
                 setLoading(false)
                 tokenHandle(data)
-                setPostChangedState(true)
                 loginHandle(true)
-                navbarHandle(oldValues => {
-                return ({
-                    ...oldValues,
-                    "login": false,
-                    "allPosts": true
+                setSuccessfullyLogged(true)
                 })
-            })})
         }
     }, [formData.submit])       
 
@@ -111,53 +106,55 @@ export default function LoginForm(
     }
 
     return(
-        <>
-        <AlertModal 
-            showAlertModal={showAlertModal}
-            setAlertModal={setAlertModal} 
-        />
-        <Card className="mb-3" bg="light" text="dark" >
-        <div style={{
-                    justifyContent: "center", 
-                    alignItems: "center", 
-                    display: "flex",
-                    padding: "20px 0 0 0"}}>
-            <h1>Login</h1>
-        </div>
-        <div style={{padding: "20px 30px 30px 30px"}}>
-            <Form onSubmit={handleSubmit}>
-                <Form.Group className="mb-3" controlId="formBasicEmailLogin">
-                    <Form.Label>Email address</Form.Label>
-                    <Form.Control
-                     type="email" 
-                     name="email"
-                     placeholder="Enter email" 
-                     onChange={handleFormData}
-                     value={formData.email}
-                    />
-                </Form.Group>
-
-                <Form.Group className="mb-3" controlId="formBasicPasswordLogin">
-                    <Form.Label>Password</Form.Label>
-                    <Form.Control 
-                    type="password" 
-                    name="password"
-                    placeholder="Enter password" 
-                    onChange={handleFormData}
-                    value={formData.password}
-                />
-                </Form.Group>
-                <div style={{display: "flex", justifyContent: "space-between", padding:"0 21px 0 0"}}>
-                    <Button variant="primary" type="submit">
-                        Submit
-                    </Button>
-                    {loading && <Spinner animation="border"/>}
-                </div>
-                <br />
-                <p>Press register to get a new account</p>
-            </Form>
+        !successfullyLogged ? 
+        <div>
+            <AlertModal 
+                showAlertModal={showAlertModal}
+                setAlertModal={setAlertModal} 
+            />
+            <Card className="mb-3" bg="light" text="dark" >
+            <div style={{
+                        justifyContent: "center", 
+                        alignItems: "center", 
+                        display: "flex",
+                        padding: "20px 0 0 0"}}>
+                <h1>Login</h1>
             </div>
-        </Card>
-        </>
+            <div style={{padding: "20px 30px 30px 30px"}}>
+                <Form onSubmit={handleSubmit}>
+                    <Form.Group className="mb-3" controlId="formBasicEmailLogin">
+                        <Form.Label>Email address</Form.Label>
+                        <Form.Control
+                        type="email" 
+                        name="email"
+                        placeholder="Enter email" 
+                        onChange={handleFormData}
+                        value={formData.email}
+                        />
+                    </Form.Group>
+
+                    <Form.Group className="mb-3" controlId="formBasicPasswordLogin">
+                        <Form.Label>Password</Form.Label>
+                        <Form.Control 
+                        type="password" 
+                        name="password"
+                        placeholder="Enter password" 
+                        onChange={handleFormData}
+                        value={formData.password}
+                    />
+                    </Form.Group>
+                    <div style={{display: "flex", justifyContent: "space-between", padding:"0 21px 0 0"}}>
+                        <Button variant="primary" type="submit">
+                            Submit
+                        </Button>
+                        {loading && <Spinner animation="border"/>}
+                    </div>
+                    <br />
+                    <p>Press register to get a new account</p>
+                </Form>
+                </div>
+            </Card>
+        </div> :
+        <Navigate to="/allPosts" />
     )
 }

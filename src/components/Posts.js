@@ -4,7 +4,7 @@ import AlertModal from "./AlertModal"
 import PostActionDropdown from './PostActionsDropdown'
 
 
-export default function Posts({userToken, url_list, setPostChangedState}){
+export default function Posts({userToken, URL_LIST}){
     
     const [posts, setPosts] = React.useState([])
 
@@ -22,7 +22,7 @@ export default function Posts({userToken, url_list, setPostChangedState}){
     // effect to get post from the server
     React.useEffect(() => {
         setLoading(true)
-        fetch(url_list.POSTS_URL, {method: "GET",
+        fetch(URL_LIST.POSTS_URL, {method: "GET",
                     headers: {
                         "Authorization": `Bearer ${userToken.access_token}`,
                             }
@@ -55,7 +55,7 @@ export default function Posts({userToken, url_list, setPostChangedState}){
                                             <Card.Subtitle className="mb-2 text-muted">{data.owner.email}</Card.Subtitle>
                                         </div>
                                         <div className="post-actions">
-                                            <PostActionDropdown setPostChangedState={setPostChangedState} url_list={url_list} userToken={userToken} id={data.id} />
+                                            <PostActionDropdown URL_LIST={URL_LIST} userToken={userToken} id={data.id} />
                                         </div>
                                     </div>
                                     <br />

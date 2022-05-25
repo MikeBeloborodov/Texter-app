@@ -6,8 +6,7 @@ import UpdatePost from './UpdatePost'
 export default function PostActionDropdown({
     id, 
     userToken, 
-    url_list, 
-    setPostChangedState
+    URL_LIST, 
     }){
     // get id for a liked post and set it, default id is 0
     const [userAction, setUserAction] = React.useState({
@@ -24,7 +23,7 @@ export default function PostActionDropdown({
     // effect to send a like to the server
     React.useEffect(() => {
         if(userAction.like !== 0) {
-            fetch(url_list.POSTS_LIKE_URL + userAction.like, {method: "PATCH",
+            fetch(URL_LIST.POSTS_LIKE_URL + userAction.like, {method: "PATCH",
                         headers:{
                             "Content-Type": "application/json",
                             "Authorization": `Bearer ${userToken.access_token}`
@@ -67,7 +66,6 @@ export default function PostActionDropdown({
                 if (data === "problem"){
                     return
                 }
-                setPostChangedState(true)
             })
         }
     },[userAction.like])
@@ -75,7 +73,7 @@ export default function PostActionDropdown({
     // effect to delete a post
     React.useEffect(() => {
         if(userAction.delete !== 0) {
-            fetch(url_list.POSTS_URL + userAction.delete, {method: "DELETE",
+            fetch(URL_LIST.POSTS_URL + userAction.delete, {method: "DELETE",
                         headers:{
                             "Content-Type": "application/json",
                             "Authorization": `Bearer ${userToken.access_token}`
@@ -118,7 +116,6 @@ export default function PostActionDropdown({
                 if (data === "problem"){
                     return
                 }
-                setPostChangedState(true)
             })
         }
     
@@ -138,8 +135,7 @@ export default function PostActionDropdown({
             {userAction.update !== 0 && <UpdatePost 
                                                     post_id={id}
                                                     userToken={userToken}
-                                                    url_list={url_list}
-                                                    setPostChangedState={setPostChangedState}
+                                                    URL_LIST={URL_LIST}
                                                     setUserAction={setUserAction}
                                         />}
             {showAlertModal &&  

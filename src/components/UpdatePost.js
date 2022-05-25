@@ -4,9 +4,8 @@ import AlertModal from "./AlertModal"
 
 export default function UpdatePost({
     post_id, 
-    url_list, 
+    URL_LIST, 
     userToken, 
-    setPostChangedState,
     setUserAction
     }){
     
@@ -33,7 +32,7 @@ export default function UpdatePost({
     // get old post title and content by id
     React.useEffect(() => {
         setLoading(true)
-        fetch(url_list.POSTS_URL + post_id, {method: "GET",
+        fetch(URL_LIST.POSTS_URL + post_id, {method: "GET",
                     headers:{
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${userToken.access_token}`
@@ -69,11 +68,12 @@ export default function UpdatePost({
                         })
         })
     }, [])
+
     // send updated post to the server
     React.useEffect(() => {
         if (formData.submit === 1){
             const payload = {"title": formData.title, "content": formData.content}
-            fetch(url_list.POSTS_URL + post_id, {method: "PATCH",
+            fetch(URL_LIST.POSTS_URL + post_id, {method: "PATCH",
                         headers:{
                             "Content-Type": "application/json",
                             "Authorization": `Bearer ${userToken.access_token}`
@@ -135,9 +135,6 @@ export default function UpdatePost({
         })
         // if user didn't send his update
         // we don't render posts again
-        if (formData.submit !== 0){
-            setPostChangedState(true)
-        }
     }
     
     function handleFormData(event){

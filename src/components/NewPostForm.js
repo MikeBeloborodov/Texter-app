@@ -2,12 +2,10 @@ import React from "react"
 import {Form, Button, Card, Spinner} from "react-bootstrap"
 import AlertModal from "./AlertModal"
 
-export default function Register({url_list}){
-
+export default function NewPostForm({URL_LIST, userToken}){
     const [formData, setFormData] = React.useState({
-        "email": "",
-        "password": "",
-        "confirmPassword": "",
+        "title": "",
+        "content": "",
         "submit": 0
     })
     // alert modal for various purposes
@@ -21,9 +19,12 @@ export default function Register({url_list}){
     
     React.useEffect(() => {
         if (formData.submit){
-            const payload = {"email": formData.email, "password": formData.password}
-            fetch(url_list.REGISTER_URL, {method: "POST",
-                        headers:{"Content-Type": "application/json"},
+            const payload = {"title": formData.title, "content": formData.content}
+            fetch(URL_LIST.POSTS_URL, {method: "POST",
+                        headers:{
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${userToken.access_token}`
+                        },
                         body: JSON.stringify(payload)})  
             .then(res => {
                 if (res.status === 201){
@@ -31,15 +32,15 @@ export default function Register({url_list}){
                 }else if (res.status === 403){
                     setAlertModal({
                             "show": true,
-                            "title": "User already exists",
-                            "body": "User with this email already exists. Please check your email address."
+                            "title": "Access problem",
+                            "body": "You do not have access to perform this action."
                                 })
                     return "problem"
                 }else if (res.status === 422){
                     setAlertModal({
                         "show": true,
                         "title": "Format error",
-                        "body": "You have entered wrong email or password format. Make sure that email has symbol @."
+                        "body": "You have entered you text in a wrong format. Please check it and try again."
                             })
                     return "problem"
                 }else{
@@ -57,21 +58,20 @@ export default function Register({url_list}){
                     return
                 }
                 setFormData({
-                        "email": "",
-                        "password": "",
-                        "confirmPassword": "",
+                        "title": "",
+                        "content": "",
                         "submit": 0
                             })
                 setAlertModal({
                         "show": true,
-                        "title": "New account registred",
-                        "body": "You can now login with your email and password."
+                        "title": "Your post has been published!",
+                        "body": 'You can now see it on the "All posts" page.'
                             })
             })
         }
-    }, [formData.submit])   
-
-
+    }, [formData.submit]) 
+    
+    
     function handleFormData(event){
         const {name, value} = event.target
         
@@ -82,20 +82,11 @@ export default function Register({url_list}){
             })
         })
     }
-
+    
     function handleSubmit(event){
-        event.preventDefault()
         setLoading(true)
-        if (formData.password !== formData.confirmPassword){
-            setAlertModal({
-                "show": true,
-                "title": "Passwords do not match",
-                "body": "Plese make sure that password and confirm password are the same"
-                    })
-            setLoading(false)
-            return
-        }
-        if (formData.email === "" || formData.password === ""){
+        event.preventDefault()
+        if (formData.title === "" || formData.content === ""){
             setAlertModal({
                 "show": true,
                 "title": "Empty fields",
@@ -124,40 +115,31 @@ export default function Register({url_list}){
                     alignItems: "center", 
                     display: "flex",
                     padding: "20px 0 0 0"}}>
-            <h1>New account</h1>
+            <h1>New post</h1>
         </div>
         <div style={{padding: "20px 30px 30px 30px"}}>
             <Form onSubmit={handleSubmit}>
-                <Form.Group className="mb-3" controlId="formBasicEmailRegister">
-                    <Form.Label>Email address</Form.Label>
+                <Form.Group className="mb-3" controlId="formBasicEmail">
+                    <Form.Label>Title</Form.Label>
                     <Form.Control
-                     type="email" 
-                     name="email"
-                     placeholder="Enter email" 
+                     type="text" 
+                     name="title"
+                     placeholder="Enter title" 
                      onChange={handleFormData}
-                     value={formData.email}
+                     value={formData.title}
                     />
                 </Form.Group>
 
-                <Form.Group className="mb-3" controlId="formBasicPasswordRegister">
-                    <Form.Label>Password</Form.Label>
+                <Form.Group className="mb-3" controlId="formBasicPassword">
+                    <Form.Label>Text</Form.Label>
                     <Form.Control 
-                    type="password" 
-                    name="password"
-                    placeholder="Enter password" 
+                    as="textarea" 
+                    rows={4}
+                    name="content"
+                    placeholder="Your text here" 
                     onChange={handleFormData}
-                    value={formData.password}
-                />
-                </Form.Group>
-                <Form.Group className="mb-3" controlId="formBasicPasswordRegisterConfirm">
-                    <Form.Label>Confirm password</Form.Label>
-                    <Form.Control 
-                    type="password" 
-                    name="confirmPassword"
-                    placeholder="Confirm password" 
-                    onChange={handleFormData}
-                    value={formData.confirmPassword}
-                />
+                    value={formData.content}
+                    />
                 </Form.Group>
                 <div style={{display: "flex", justifyContent: "space-between", padding:"0 21px 0 0"}}>
                     <Button variant="primary" type="submit">

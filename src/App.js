@@ -1,173 +1,62 @@
 import React from "react"
-import {BrowserRouter as Router, Routes, Route} from 'react-router-dom'
+import {Routes, Route} from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'react-transition-group'
-import { Fade } from "react-bootstrap"
 import "./index.css"
-import Navbar from "./components/Navbar"
-import LoginForm from "./components/LoginForm"
-import Posts from "./components/Posts"
-import NewPost from "./components/NewPost"
-import About from "./components/About"
-import Register from "./components/Register"
-
-const URL_LIST = {
-    LOGIN_URL: process.env.REACT_APP_API_LOGIN_URL,
-    REGISTER_URL:process.env.REACT_APP_API_REGISTER_URL,
-    POSTS_URL: process.env.REACT_APP_API_POSTS_URL,
-    POSTS_LIKE_URL: process.env.REACT_APP_API_POSTS_LIKE_URL
-}
+import RegisterPage from "./routes/RegisterPage"
+import AboutPage from "./routes/AboutPage"
+import LoginPage from "./routes/LoginPage"
+import MissingPage from "./routes/MissingPage"
+import AllPosts from "./routes/AllPosts"
+import NewPostPage from "./routes/NewPostPage"
+import MainPage from "./routes/MainPage"
 
 export default function App(){
-
+    const URL_LIST = {
+        LOGIN_URL: process.env.REACT_APP_API_LOGIN_URL,
+        REGISTER_URL:process.env.REACT_APP_API_REGISTER_URL,
+        POSTS_URL: process.env.REACT_APP_API_POSTS_URL,
+        POSTS_LIKE_URL: process.env.REACT_APP_API_POSTS_LIKE_URL
+    }
     // check if the user is successfully logged in
     const [isLogged, setIsLogged] = React.useState(false)
     // get and save user token from api
     const [userToken, setUserToken] = React.useState({})
-    // use navbar choices to redirect user
-    const [navbarChoice, setNavbarChoice] = React.useState({
-        "login": true,
-        "register": false,
-        "allPosts": false,
-        "newPost": false,
-        "about": false
-    })
-    // if something changed about posts reload them
-    const [postChangedState, setPostChangedState] = React.useState(false)
-    const [postElements, setPostElements] = React.useState()
-    React.useEffect(() => {
-        if (postChangedState == true){
-            setPostElements(() => {
-                return (
-                        <Posts 
-                            userToken={userToken}
-                            url_list={URL_LIST}
-                            setPostChangedState={setPostChangedState}
-                        />
-                )
-            })
-        }
-        setPostChangedState(false)
-    }, [postChangedState])
-    
+
     return(
-        <div>
-            { 
-
-                // Navbar
-            <div>
-                <Navbar isLogged={isLogged} setNavbarChoice={setNavbarChoice}/>
-            </div>
-
-            }
-            <div className="maindiv">
+        <Routes>
             {
-
-                // Login page
-                navbarChoice.login &&   
-                <Fade
-                    appear={true}
-                    in={navbarChoice.login} 
-                    mountOnEnter={true}
-                    unmountOnExit={true}
-                >   
-                    <div style={{   width: "400px",
-                                    margin: "0 auto", 
-                                    padding: "100px 0 0 0"
-                                    }}>
-                        <LoginForm 
-                            loginHandle={setIsLogged}
-                            tokenHandle={setUserToken}
-                            navbarHandle={setNavbarChoice}
-                            url_list={URL_LIST}
-                            setPostChangedState={setPostChangedState}
-                        />
-                    </div>
-                </Fade>
-            
+                // Public routes
             }
+            <Route exact path="/" element={<MainPage />}/>
+            <Route path="/login" element={<LoginPage 
+                                                URL_LIST={URL_LIST}
+                                                loginHandle={setIsLogged}
+                                                tokenHandle={setUserToken} 
+                                                isLogged={isLogged}   
+                                                />}/>
+            <Route path="/register" element={<RegisterPage 
+                                                URL_LIST={URL_LIST}
+                                                isLogged={isLogged}    
+                                                />}/>
+            <Route path="/about" element={<AboutPage />} isLogged={isLogged}/>
+            <Route path="*" element={<MissingPage isLogged={isLogged}/>}/>
+
+
+
             {
-
-                // Register page
-                navbarChoice.register &&   
-                <Fade
-                    appear={true}
-                    in={navbarChoice.register} 
-                    mountOnEnter={true}
-                    unmountOnExit={true}
-                >   
-                    <div style={{   width: "400px", 
-                                    margin: "0 auto", 
-                                    padding: "100px 0 0 0",
-                                }}>
-                        <Register 
-                            url_list={URL_LIST}
-                        />
-                    </div>
-                </Fade>
-
+                //Protected routes
             }
-            {
-
-                // Posts after login
-            navbarChoice.allPosts && isLogged && !postChangedState &&
-                <Fade
-                    appear={true}
-                    in={navbarChoice.allPosts} 
-                    mountOnEnter={true}
-                    unmountOnExit={true}
-                >   
-                    <div style={{   
-                                    margin: "0 auto", 
-                                    padding: "50px 0 0 0",
-                                }}>
-                        {postElements}
-                    </div>
-                </Fade>
-            
-            }
-            {
-
-                // About page
-                navbarChoice.about &&
-                <Fade   
-                    appear={true}
-                    in={navbarChoice.about} 
-                    mountOnEnter={true}
-                    unmountOnExit={true}
-                >
-                    <div style={{   
-                                    margin: "0 auto", 
-                                    padding: "10% 3% 0 3%",
-                                }}>
-                        <About />
-                    </div>
-                </Fade>
-
-            }
-            {
-                
-                // Create new post page
-                navbarChoice.newPost && 
-                    <Fade
-                        appear={true}
-                        in={navbarChoice.newPost} 
-                        mountOnEnter={true}
-                        unmountOnExit={true}
-                    >   
-                        <div style={{   width: "400px", 
-                                        margin: "0 auto", 
-                                        padding: "50px 0 0 0",
-                                    }}>
-                            <NewPost 
-                                userToken={userToken}
-                                url_list={URL_LIST}
-                            />
-                        </div>
-                    </Fade>
-
-            }
-            </div>
-        </div>
+            <Route path="/allPosts" element={<AllPosts 
+                                                URL_LIST={URL_LIST}
+                                                isLogged={isLogged}
+                                                userToken={userToken}
+                                                />}/>
+            <Route path="/newPost" element={<NewPostPage 
+                                                URL_LIST={URL_LIST}
+                                                isLogged={isLogged}
+                                                userToken={userToken}
+                                                />}/>   
+        </Routes>
     )
 }

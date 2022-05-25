@@ -1,5 +1,5 @@
 import React from 'react'
-import {Card, Button, Spinner} from "react-bootstrap"
+import {Card, Spinner} from "react-bootstrap"
 import AlertModal from "./AlertModal"
 import PostActionDropdown from './PostActionsDropdown'
 
@@ -78,6 +78,16 @@ export default function Posts({userToken, url_list, setPostChangedState}){
                                             </Card.Subtitle>
                                         </div>
                                     </div>
+                                        {data.created_at != data.updated_at ?
+                                            <div className='date-time' style={{display:"flex"}}>
+                                            <Card.Subtitle className="mb-2 text-muted" style={{paddingRight: "10px"}}>
+                                                Last update: {data.updated_at.slice(11, 16)}
+                                            </Card.Subtitle>
+                                            <Card.Subtitle className="mb-2 text-muted" style={{paddingRight: "40px"}}>
+                                                {data.updated_at.slice(0,10)}
+                                            </Card.Subtitle>
+                                        </div>   :
+                                        <></>}
                                     </Card.Body>
                             </Card>
                             <br />
